@@ -66,9 +66,9 @@ function showLoadingPopup(selectedText) {
 }
 
 // Injected function: Update popup with AI result
-function updatePopupWithResult(resultText) {
+function updatePopupWithResult(fakeLikelihood, reason, source) {
     let popup = document.getElementById("fact-check-popup");
     if (popup) {
-        popup.innerHTML = `<strong>AI Fact Check:</strong><br>${resultText}`;
+        popup.innerHTML = `<strong>AI Fact Check:</strong><br>Fake likeliness (1-least to 5-most): ${fakeLikelihood}<br><br>Reason: ${reason}<br><br>Source: ${source}`;
     }
 }
