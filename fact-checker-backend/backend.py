@@ -26,7 +26,7 @@ class FactCheckRequest(BaseModel):
 @app.post("/fact-check")
 async def fact_check(request: FactCheckRequest):
     template = """You are a professional investigator for fake news. You have to decide whether the following news\
-        delimited by the triple backticks is fake or not. Your response should be a pure json string with 3 field: fake-likeliness:\
+        delimited by the triple backticks is fake or not. Your response should be a pure json string with 3 field: fake_likelihood:\
         likeliness of the news being fake, using numbers 1 to 5 indicating: Not likely, less likely, maybe, more likely, most likely; \
         reason: the reason why you think the news is fake or not; \
         and source: provide the links to the websites you found the evidence the news is fake. \
@@ -46,6 +46,7 @@ async def fact_check(request: FactCheckRequest):
 
     # Convert JSON string to Python dictionary
     data = json.loads(cleaned_string)
+    print(data)
 
     
     return data

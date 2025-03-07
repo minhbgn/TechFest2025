@@ -29,7 +29,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 function: updatePopupWithResult,
-                args: [data.fake-likeliness, data.reason, data.source]
+                args: [data["fake_likelihood"], data["reason"], data["source"]]
             });
         })
         .catch(error => {
@@ -69,6 +69,10 @@ function showLoadingPopup(selectedText) {
 function updatePopupWithResult(fakeLikelihood, reason, source) {
     let popup = document.getElementById("fact-check-popup");
     if (popup) {
-        popup.innerHTML = `<strong>AI Fact Check:</strong><br>Fake likeliness (1-least to 5-most): ${fakeLikelihood}<br><br>Reason: ${reason}<br><br>Source: ${source}`;
+        let sourcesHTML = source.map(link => `<a href="${link}" target="_blank">${link}</a>`).join("<br>");
+        popup.innerHTML = `<strong>AI Fact Check:</strong><br>
+            Fake likeliness (1-least to 5-most): ${fakeLikelihood}<br><br>
+            <strong>Reason:</strong> ${reason}<br><br>
+            <strong>Sources:</strong><br> ${sourcesHTML}`;
     }
 }
