@@ -1,0 +1,11 @@
+#fact-check-popup {
+  max-width: 250px;
+  font-family: Arial, sans-serif;
+  background: white;
+  color: black;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  line-height: 1.5;
+}
