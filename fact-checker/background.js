@@ -29,7 +29,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 function: updatePopupWithResult,
-                args: [data.result]
+                args: [data.fake-likeliness, data.reason, data.source]
             });
         })
         .catch(error => {
