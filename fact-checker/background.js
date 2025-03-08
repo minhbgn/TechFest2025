@@ -79,6 +79,7 @@ function showLoadingPopup(selectedText) {
     });
 }
 
+
 // Injected function: Update popup with AI result
 function updatePopupWithResult(resultText) {
     let popup = document.getElementById("fact-check-popup");
