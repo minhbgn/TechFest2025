@@ -11,7 +11,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         const selectedText = info.selectionText;
         if (!selectedText) return;
 
-        // Send a message to content script to show loading popup
+        // Inject loading popup with selected text
         chrome.scripting.executeScript({
             target: { tabId: tab.id },
             function: showLoadingPopup,
@@ -29,7 +29,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 function: updatePopupWithResult,
-                args: [data["fake_likelihood"], data["reason"], data["source"]]
+                args: [data.result]
             });
         })
         .catch(error => {
@@ -81,13 +81,14 @@ function showLoadingPopup(selectedText) {
 
 
 // Injected function: Update popup with AI result
-function updatePopupWithResult(fakeLikelihood, reason, source) {
+function updatePopupWithResult(resultText) {
     let popup = document.getElementById("fact-check-popup");
     if (popup) {
-        let sourcesHTML = source.map(link => `<a href="${link}" target="_blank">${link}</a>`).join("<br>");
-        popup.innerHTML = `<strong>AI Fact Check:</strong><br>
-            Fake likeliness (1-least to 5-most): ${fakeLikelihood}<br><br>
-            <strong>Reason:</strong> ${reason}<br><br>
-            <strong>Sources:</strong><br> ${sourcesHTML}`;
+        let contentDiv = popup.querySelector(".popup-content");
+        if (contentDiv) {
+            contentDiv.innerHTML = `<strong>AI Fact Check:</strong><br>${resultText}`;
+        } else {
+            popup.innerHTML = `<strong>AI Fact Check:</strong><br>${resultText}`;
+        }
     }
 }

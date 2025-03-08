@@ -1,0 +1,144 @@
+body {
+    font-family: Arial, sans-serif;
+    width: 300px;
+    padding: 10px;
+    margin: 0;
+}
+
+/* Hide elements by default */
+.hidden {
+    display: none;
+}
+
+/* Spinner styles (nếu cần dùng ở các nơi khác) */
+.spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Các style gốc dành cho kết quả phân tích (có thể tái sử dụng cho popup hoặc các phần khác) */
+#result {
+    border: 1px solid #ccc;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+h2 {
+    text-align: center;
+}
+button {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+button:hover {
+    background: #0056b3;
+}
+.assessment-good { color: green; }
+.assessment-warning { color: orange; }
+.assessment-bad { color: red; }
+
+/* Style mới dành cho popup fact-check */
+.fact-check-popup {
+    position: absolute;
+    background: #ffffff;
+    border: 1px solid #ccc;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    z-index: 10000;
+    font-size: 14px;
+    min-width: 250px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 0;
+    transform: scale(0.95);
+}
+.fact-check-popup.show {
+    opacity: 1;
+    transform: scale(1);
+}
+.fact-check-popup .popup-close {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+.fact-check-popup .popup-content {
+    margin-top: 10px;
+}
+.fact-check-popup {
+    position: absolute;
+    /* Gradient động */
+    background: linear-gradient(45deg, #f3ec78, #af4261);
+    background-size: 200% 200%;
+    animation: gradientShift 5s ease infinite, pulseShadow 2s infinite;
+    border: 1px solid #ccc;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    z-index: 10000;
+    font-size: 14px;
+    min-width: 250px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+/* Hiệu ứng chuyển động gradient */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Hiệu ứng nhấp nháy bóng đổ */
+@keyframes pulseShadow {
+    0% { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    50% { box-shadow: 0 6px 16px rgba(0,0,0,0.25); }
+    100% { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+}
+.fact-check-popup .popup-close {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.fact-check-popup .popup-close::after {
+    content: "";
+    position: absolute;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    width: 0;
+    height: 0;
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.fact-check-popup .popup-close:hover::after {
+    width: 30px;
+    height: 30px;
+    top: -5px;
+    left: -5px;
+}
+
