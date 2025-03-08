@@ -45,8 +45,10 @@ async def fact_check(request: FactCheckRequest):
     cleaned_string = re.sub(r'\s*```\s*$', '', cleaned_string)  # Remove code block end
 
     # Convert JSON string to Python dictionary
-    data = json.loads(cleaned_string)
-    print(data)
-
-    
-    return data
+    try:
+        data = json.loads(cleaned_string)
+        print(data)
+        return data
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON: {e}")
+        return {"error": "Error decoding JSON"}

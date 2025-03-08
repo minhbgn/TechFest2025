@@ -26,14 +26,29 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         })
         .then(response => response.json())
         .then(data => {
-            chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                function: updatePopupWithResult,
-                args: [data["fake_likelihood"], data["reason"], data["source"]]
-            });
+            if (data.hasOwnProperty("error")) {
+                // Handle the error case
+                chrome.scripting.executeScript({
+                    target: { tabId: tab.id },
+                    function: updatePopupWithError, // New function to handle error display
+                    args: [data["error"]]
+                });
+            } else {
+                // Handle the successful response
+                chrome.scripting.executeScript({
+                    target: { tabId: tab.id },
+                    function: updatePopupWithResult,
+                    args: [data["fake_likelihood"], data["reason"], data["source"]]
+                });
+            }
         })
         .catch(error => {
             console.error("Fact-checking failed:", error);
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                function: updatePopupWithError,
+                args: [error]
+            })
         });
     }
 });
@@ -45,38 +60,25 @@ function showLoadingPopup(selectedText) {
 
     let popup = document.createElement("div");
     popup.id = "fact-check-popup";
-    popup.classList.add("fact-check-popup");
+    popup.style.position = "absolute";
+    popup.style.background = "white";
+    popup.style.border = "1px solid #ccc";
+    popup.style.padding = "8px";
+    popup.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)";
+    popup.style.borderRadius = "5px";
+    popup.style.zIndex = "10000";
+    popup.style.fontSize = "14px";
+    popup.innerHTML = `<button onclick='this.parentElement.remove()'
+        style="background: grey, color: black">X</button> Checking...`;
 
-    // Nội dung popup ban đầu với nút đóng và trạng thái loading
-    popup.innerHTML = `
-        <button class="popup-close">&times;</button>
-        <div class="popup-content">Checking...</div>
-    `;
-    
-    // Xác định vị trí dựa vào vùng được chọn
     let selection = window.getSelection();
-    if (selection.rangeCount > 0) {
-        let range = selection.getRangeAt(0);
-        let rect = range.getBoundingClientRect();
-        popup.style.left = `${rect.left + window.scrollX}px`;
-        popup.style.top = `${rect.bottom + window.scrollY + 5}px`;
-    } else {
-        // Vị trí mặc định nếu không tìm thấy vùng chọn
-        popup.style.left = "50%";
-        popup.style.top = "50%";
-    }
-    
+    let range = selection.getRangeAt(0);
+    let rect = range.getBoundingClientRect();
+
+    popup.style.left = `${rect.left + window.scrollX}px`;
+    popup.style.top = `${rect.bottom + window.scrollY + 5}px`;
+
     document.body.appendChild(popup);
-
-    // Áp dụng hiệu ứng hiển thị (fade-in và scale)
-    setTimeout(() => {
-        popup.classList.add("show");
-    }, 10);
-
-    // Xử lý nút đóng
-    popup.querySelector(".popup-close").addEventListener("click", () => {
-        popup.remove();
-    });
 }
 
 
@@ -88,6 +90,17 @@ function updatePopupWithResult(fakeLikelihood, reason, source) {
         popup.innerHTML = `<strong>AI Fact Check:</strong><br>
             Fake likeliness (1-least to 5-most): ${fakeLikelihood}<br><br>
             <strong>Reason:</strong> ${reason}<br><br>
-            <strong>Sources:</strong><br> ${sourcesHTML}`;
+            <strong>Sources:</strong><br> ${sourcesHTML}<br><br>
+            <button onclick='this.parentElement.remove()' style="background: grey, color: black">Done</button>`;
+    }
+}
+
+function updatePopupWithError(error) {
+    let popup = document.getElementById("fact-check-popup");
+    if (popup) {
+        let sourcesHTML = source.map(link => `<a href="${link}" target="_blank">${link}</a>`).join("<br>");
+        popup.innerHTML = `<strong>Error: </strong><br>Unexpected agent response: ${error}<br>
+            Please try again.<br><br>
+            <button onclick='this.parentElement.remove()' style="background: grey, color: black">Done</button>`;
     }
 }
