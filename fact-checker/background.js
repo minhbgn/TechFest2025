@@ -38,32 +38,47 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     }
 });
 
-// Injected function: Show a floating loading popup
+// Injected function: Show a floating loading popup with animation and close button
 function showLoadingPopup(selectedText) {
     let existingPopup = document.getElementById("fact-check-popup");
     if (existingPopup) existingPopup.remove();
 
     let popup = document.createElement("div");
     popup.id = "fact-check-popup";
-    popup.style.position = "absolute";
-    popup.style.background = "white";
-    popup.style.border = "1px solid #ccc";
-    popup.style.padding = "8px";
-    popup.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)";
-    popup.style.borderRadius = "5px";
-    popup.style.zIndex = "10000";
-    popup.style.fontSize = "14px";
-    popup.innerText = "Checking...";
+    popup.classList.add("fact-check-popup");
+
+    // Nội dung popup ban đầu với nút đóng và trạng thái loading
+    popup.innerHTML = `
+        <button class="popup-close">&times;</button>
+        <div class="popup-content">Checking...</div>
+    `;
     
+    // Xác định vị trí dựa vào vùng được chọn
     let selection = window.getSelection();
-    let range = selection.getRangeAt(0);
-    let rect = range.getBoundingClientRect();
-
-    popup.style.left = `${rect.left + window.scrollX}px`;
-    popup.style.top = `${rect.bottom + window.scrollY + 5}px`;
-
+    if (selection.rangeCount > 0) {
+        let range = selection.getRangeAt(0);
+        let rect = range.getBoundingClientRect();
+        popup.style.left = `${rect.left + window.scrollX}px`;
+        popup.style.top = `${rect.bottom + window.scrollY + 5}px`;
+    } else {
+        // Vị trí mặc định nếu không tìm thấy vùng chọn
+        popup.style.left = "50%";
+        popup.style.top = "50%";
+    }
+    
     document.body.appendChild(popup);
+
+    // Áp dụng hiệu ứng hiển thị (fade-in và scale)
+    setTimeout(() => {
+        popup.classList.add("show");
+    }, 10);
+
+    // Xử lý nút đóng
+    popup.querySelector(".popup-close").addEventListener("click", () => {
+        popup.remove();
+    });
 }
+
 
 // Injected function: Update popup with AI result
 function updatePopupWithResult(fakeLikelihood, reason, source) {
